@@ -2,29 +2,25 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 	"sync/atomic"
 
 	"github.com/gin-gonic/gin"
+	"github.com/imokay5/douyin-demo/service"
 )
 
 // 登录信息 token：账号密码
-var usersLoginInfo = map[string]User{
-	"zhangleidouyin": { // token
-		Id:            1,
-		Name:          "zhanglei",
-		FollowCount:   10,
-		FollowerCount: 5,
-		IsFollow:      true,
-	},
-}
+var usersLoginInfo = map[string]User{}
 
 var userIdSequence = int64(1)
 
+//请求用户信息的返回
 type UserResponse struct {
 	Response
-	User User `json:"user,omitempty"`
+	User service.UserData `json:"user,omitempty"`
 }
 
+//登陆或者注册结束后返回给客户端
 type UserLoginResponse struct {
 	Response
 	UserId int64  `json:"user_id,omitempty"`
@@ -33,13 +29,14 @@ type UserLoginResponse struct {
 
 // 获取用户信息
 func UserInfo(c *gin.Context) {
+	user_id, _ := strconv.ParseInt(c.Query("user_id"), 10, 64) // 将查询 字符串 转为 10进制数据，限制8位
 	// 可以通过Query来获取URL中？后面所携带的参数。
 	token := c.Query("token")
-
-	if user, exist := usersLoginInfo[token]; exist {
+	userData, err := service.QueryUserData(user_id, token)
+	if err == nil {
 		c.JSON(http.StatusOK, UserResponse{
 			Response: Response{StatusCode: 0},
-			User:     user,
+			User:     *userData,
 		})
 	} else {
 		c.JSON(http.StatusOK, UserResponse{

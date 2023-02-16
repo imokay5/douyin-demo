@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 视频列表 resp 信息
+// 视频列表回应信息
 type VideoListResponse struct {
 	Response
 	VideoList []Video `json:"video_list"`
