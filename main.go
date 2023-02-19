@@ -1,5 +1,6 @@
 package main
 
+// xch
 import (
 	"os"
 
@@ -14,8 +15,10 @@ func main() {
 		os.Exit(-1)
 	}
 
+	// 声明路由
 	r := gin.Default()
+	// 初始化路由
 	initRouter(r)
-	// listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	// for windows "127.0.0.1:8080")
 	r.Run()
 }

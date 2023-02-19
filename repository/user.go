@@ -8,27 +8,34 @@ import (
 	"gorm.io/gorm"
 )
 
+// 用户登录信息
 var UsersLoginInfo map[string]User
 
+// 用户信息
 type User struct {
-	Id         int64     `gorm:"column:user_id"`
-	Name       string    `gorm:"column:username"`
-	Password   string    `gorm:"column:password"`
-	CreateTime time.Time `gorm:"column:create_time"`
-	ModifyTime time.Time `gorm:"column:modify_time"`
+	Id         int64     `gorm:"column:user_id"`     // id
+	Name       string    `gorm:"column:username"`    // 用户名
+	Password   string    `gorm:"column:password"`    // 密码
+	CreateTime time.Time `gorm:"column:create_time"` // 创建时间
+	ModifyTime time.Time `gorm:"column:modify_time"` // 修改时间
 }
 
+// db 表名
 func (User) TableName() string {
 	return "user"
 }
 
+// Dao 数据库操作 结构体
 type UserDao struct {
 }
 
+// Dao 结构体指针
 var userDao *UserDao
+
+// 使用一次的方法
 var userOnce sync.Once
 
-// 创建一个 UserDao指针，指向UserDao实例
+// 初始化 Dao 操作结构体实例
 func NewUserDaoInstance() *UserDao {
 	userOnce.Do(
 		func() {
@@ -38,7 +45,7 @@ func NewUserDaoInstance() *UserDao {
 	return userDao
 }
 
-// 当初始化数据库时，创建 map 的 toekn-user 映射，以方便后续的操作。
+// 创建 token 和 User 的映射，当初始化数据库时使用
 func (*UserDao) TokenMap() {
 	UsersLoginInfo = make(map[string]User)
 	result := make([]*User, 0)
@@ -46,9 +53,9 @@ func (*UserDao) TokenMap() {
 	for _, val := range result {
 		UsersLoginInfo[val.Name+val.Password] = *val // UserLoginInfo[token] = *user
 	}
-
 }
 
+// 通过 id 查询 User
 func (*UserDao) QueryUserById(id int64) (*User, error) {
 	var user User
 	err := db.Where("user_id=?", id).Find(&user).Error

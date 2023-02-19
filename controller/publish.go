@@ -6,23 +6,20 @@ import (
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
+	"github.com/imokay5/douyin-demo/repository"
 )
 
-// 视频列表回应信息
-type VideoListResponse struct {
-	Response
-	VideoList []Video `json:"video_list"`
+// 视频列表响应
+type VideoListRespanse struct {
+	Response              // 响应
+	VideoList []VideoData `json:"video_data"` // 视频列表
 }
 
-// Publish check token then save upload file to public directory
+// 发布检查 token，将上传视频保存于 public 目录，将数据保存于 db 中
 func Publish(c *gin.Context) {
 	token := c.PostForm("token")
-
-	if _, exist := usersLoginInfo[token]; !exist {
-		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "用户不存在"}) //！！ 一直报用户不存在
-		return
-	}
-
+	title := c.PostForm("title")
+	fmt.Println("---", token, "---", title)
 	data, err := c.FormFile("data")
 	if err != nil {
 		c.JSON(http.StatusOK, Response{
@@ -30,12 +27,17 @@ func Publish(c *gin.Context) {
 			StatusMsg:  err.Error(),
 		})
 		return
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"msg": data,
+		})
 	}
-
 	filename := filepath.Base(data.Filename)
-	user := usersLoginInfo[token]
+	user := repository.UsersLoginInfo[token]
+	fmt.Println("user.Password:", user.Password)
 	finalName := fmt.Sprintf("%d_%s", user.Id, filename)
-	saveFile := filepath.Join("./public/", finalName)
+	saveFile := filepath.Join("./public", finalName)
+	fmt.Println("saveFile:", saveFile)
 	if err := c.SaveUploadedFile(data, saveFile); err != nil {
 		c.JSON(http.StatusOK, Response{
 			StatusCode: 1,
@@ -43,16 +45,4 @@ func Publish(c *gin.Context) {
 		})
 		return
 	}
-
-	c.JSON(http.StatusOK, Response{
-		StatusCode: 0,
-		StatusMsg:  finalName + "上传成功",
-	})
-}
-
-func PublishList(c *gin.Context) {
-	c.JSON(http.StatusOK, VideoListResponse{
-		Response:  Response{StatusCode: 0},
-		VideoList: DemoVideos,
-	})
 }

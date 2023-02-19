@@ -1,6 +1,6 @@
 package controller
 
-var DemoVideos = []Video{
+var DemoVideos = []VideoData{
 	{
 		Id:            1,
 		Author:        DemoUser,
@@ -12,7 +12,7 @@ var DemoVideos = []Video{
 	},
 }
 
-var DemoUser = User{
+var DemoUser = UserData{
 	Id:            1,
 	Name:          "TestUser",
 	FollowCount:   0,

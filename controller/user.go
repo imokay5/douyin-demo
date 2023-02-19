@@ -4,13 +4,22 @@ import (
 	"net/http"
 	"strconv"
 	"sync/atomic"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/imokay5/douyin-demo/service"
 )
 
 // 登录信息 token：账号密码
-var usersLoginInfo = map[string]User{}
+var usersLoginInfo = map[string]User{
+	"xch123456": {
+		Id:         1001,
+		Name:       "xch",
+		Password:   "123456",
+		CreateTime: time.Now(),
+		ModifyTime: time.Now(),
+	},
+}
 
 var userIdSequence = int64(1)
 
