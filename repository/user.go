@@ -20,7 +20,7 @@ type User struct {
 	ModifyTime time.Time `gorm:"column:modify_time"` // 修改时间
 }
 
-// db 表名
+// 用户 表名
 func (User) TableName() string {
 	return "user"
 }
@@ -29,10 +29,7 @@ func (User) TableName() string {
 type UserDao struct {
 }
 
-// Dao 结构体指针
 var userDao *UserDao
-
-// 使用一次的方法
 var userOnce sync.Once
 
 // 初始化 Dao 操作结构体实例
@@ -67,4 +64,18 @@ func (*UserDao) QueryUserById(id int64) (*User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+// 在数据库中创建一个新视频
+func (*VideoDao) AddVideo(newVideo Video) (*Video, error) {
+	var oldVideo Video
+	db.Last(&oldVideo) //video that has the max id
+	newVideo.Id = oldVideo.Id + 1
+	err := db.Create(&newVideo).Error
+	if err != nil {
+		log.Println("add video err:" + err.Error())
+		return nil, err
+	}
+
+	return &newVideo, nil
 }

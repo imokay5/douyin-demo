@@ -12,7 +12,11 @@ func initRouter(r *gin.Engine) {
 	apiRouter := r.Group("/douyin")
 
 	// basic apis
+	apiRouter.GET("/feed/", controller.Feed)
+	apiRouter.GET("/user/", controller.UserInfo)
+	apiRouter.POST("/user/register/", controller.Register)
+	apiRouter.POST("/user/login/", controller.Login)
 	// POST: 127.0.0.1:8080/douyin/publish/action/		token=xch123456&title=a_little_bear
 	apiRouter.POST("publish/action/", controller.Publish) // 发布视频
-
+	apiRouter.GET("publish/list/", controller.PublishList)
 }

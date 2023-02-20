@@ -5,7 +5,10 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/imokay5/douyin-demo/service"
 )
+
+type VideoData = service.VideoData
 
 type FeedResponse struct {
 	Response

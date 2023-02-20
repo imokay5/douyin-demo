@@ -7,8 +7,11 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/imokay5/douyin-demo/repository"
 	"github.com/imokay5/douyin-demo/service"
 )
+
+type User = repository.User
 
 // 登录信息 token：账号密码
 var usersLoginInfo = map[string]User{
